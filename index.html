@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Armatura & Beton</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF9F1C">
+
+    <!-- Apple Mobile Web App -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Armatura & Beton">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons and Libraries -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dark-theme">
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">
+                <i data-lucide="construction" class="logo-icon"></i>
+            </div>
+            <h1>Qurulish<br>Hisoblagich</h1>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+            <p></p>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <main id="app" class="hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <i data-lucide="layout-grid" class="header-icon"></i>
+                <span class="header-title">Armatura Hisoblagich</span>
+            </div>
+            <div class="header-right">
+                <button id="theme-toggle" class="icon-btn">
+                    <i data-lucide="moon" id="theme-icon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation (Moved to Top) -->
+        <nav class="top-nav">
+            <button class="nav-item active" data-page="calculator">
+                <i data-lucide="calculator"></i>
+                <span>Armatura</span>
+            </button>
+            <button class="nav-item" data-page="concrete">
+                <i data-lucide="box"></i>
+                <span>Beton</span>
+            </button>
+            <button class="nav-item" data-page="mesh">
+                <i data-lucide="grid-3x3"></i>
+                <span>Setka</span>
+            </button>
+            <button class="nav-item" data-page="truss">
+                <i data-lucide="drafting-compass"></i>
+                <span>Ferma</span>
+            </button>
+            <button class="nav-item" data-page="norms">
+                <i data-lucide="scroll-text"></i>
+                <span>Me'yorlar</span>
+            </button>
+            <button class="nav-item" data-page="history">
+                <i data-lucide="history"></i>
+                <span>Tarix</span>
+            </button>
+        </nav>
+
+        <!-- Content Area -->
+        <div id="content" class="content-scroll">
+            <!-- Calculator Page -->
+            <section id="page-calculator" class="page active">
+                <div class="calculator-container">
+                    <div class="glass-card main-inputs">
+                        <div class="input-group">
+                            <label>Armatura diametri (mm)</label>
+                            <div class="input-with-icon">
+                                <i data-lucide="diameter"></i>
+                                <input type="number" id="input-diameter" placeholder="Masalan: 12" step="0.1">
+                            </div>
+                        </div>
+
+                        <!-- Quick Diameter Buttons -->
+                        <div class="quick-diameters">
+                            <button class="diameter-btn" data-val="8">8</button>
+                            <button class="diameter-btn" data-val="10">10</button>
+                            <button class="diameter-btn active" data-val="12">12</button>
+                            <button class="diameter-btn" data-val="14">14</button>
+                            <button class="diameter-btn" data-val="16">16</button>
+                            <button class="diameter-btn" data-val="18">18</button>
+                            <button class="diameter-btn" data-val="20">20</button>
+                            <button class="diameter-btn" data-val="25">25</button>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Uzunligi (metr)</label>
+                            <div class="input-with-icon">
+                                <i data-lucide="ruler"></i>
+                                <input type="number" id="input-length" placeholder="Masalan: 6" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Soni (dona)</label>
+                            <div class="input-with-icon">
+                                <i data-lucide="layers"></i>
+                                <input type="number" id="input-count" placeholder="Masalan: 20">
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button id="btn-calculate" class="primary-btn">
+                                <i data-lucide="calculator"></i>
+                                Hisoblash
+                            </button>
+                            <button id="btn-clear" class="secondary-btn">
+                                <i data-lucide="refresh-cw"></i>
+                                Tozalash
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Result Card -->
+                    <div id="result-card" class="glass-card result-card hidden-animated">
+                        <div class="truss-view-tabs">
+                            <button class="view-tab active" data-view-target="rebar-2d-view" data-calc="rebar">Sxema</button>
+                            <button class="view-tab" data-view-target="rebar-3d-view" data-calc="rebar">3D Model</button>
+                        </div>
+
+                        <div id="rebar-2d-view" class="rebar-visual-container">
+                            <canvas id="rebarCanvas"></canvas>
+                        </div>
+
+                        <div id="rebar-3d-view" class="glass-card drawing-card hidden">
+                            <div id="rebar-3d-container" style="width: 100%; height: 300px;"></div>
+                        </div>
+
+                        <div class="result-header">
+                            <h3>Hisob-kitob natijasi</h3>
+                            <button id="btn-export" class="icon-btn-small" title="PDF eksport">
+                                <i data-lucide="download"></i>
+                            </button>
+                        </div>
+
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <span class="res-label">1m og‘irligi</span>
+                                <span class="res-value" id="res-unit-weight">0.000</span>
+                                <span class="res-unit">kg</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="res-label">Bitta tayoq og‘irligi</span>
+                                <span class="res-value" id="res-single-weight">0.00</span>
+                                <span class="res-unit">kg</span>
+                            </div>
+                            <div class="result-item">
+                                <span class="res-label">Jami uzunlik</span>
+                                <span class="res-value" id="res-total-length">0.00</span>
+                                <span class="res-unit">m</span>
+                            </div>
+                            <div class="result-item highlight">
+                                <span class="res-label">Jami og‘irlik</span>
+                                <span class="res-value" id="res-total-weight">0.00</span>
+                                <span class="res-unit">kg</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mesh Calculator Page -->
+            <section id="page-mesh" class="page">
+                <div class="calculator-container">
+                    <div class="glass-card main-inputs">
+                        <div class="page-header">
+                            <h2>Armatura Setkasi</h2>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Eni (metr)</label>
+                                <input type="number" id="mesh-width" placeholder="Masalan: 3" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label>Bo'yi (metr)</label>
+                                <input type="number" id="mesh-height" placeholder="Masalan: 4" step="0.1">
+                            </div>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Qadam X (mm)</label>
+                                <input type="number" id="mesh-step-x" placeholder="200" value="200">
+                            </div>
+                            <div class="input-group">
+                                <label>Qadam Y (mm)</label>
+                                <input type="number" id="mesh-step-y" placeholder="200" value="200">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Diametr (mm)</label>
+                            <div class="input-with-icon">
+                                <i data-lucide="diameter"></i>
+                                <input type="number" id="mesh-diameter" placeholder="12" value="12">
+                            </div>
+                        </div>
+
+                        <!-- Quick Diameter Buttons for Mesh -->
+                        <div class="quick-diameters">
+                            <button class="mesh-diameter-btn" data-val="8">8</button>
+                            <button class="mesh-diameter-btn" data-val="10">10</button>
+                            <button class="mesh-diameter-btn active" data-val="12">12</button>
+                            <button class="mesh-diameter-btn" data-val="14">14</button>
+                            <button class="mesh-diameter-btn" data-val="16">16</button>
+                            <button class="mesh-diameter-btn" data-val="18">18</button>
+                            <button class="mesh-diameter-btn" data-val="20">20</button>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button id="btn-calc-mesh" class="primary-btn">
+                                <i data-lucide="pencil-ruler"></i>
+                                Chizish va Hisoblash
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mesh Drawing and Results -->
+                    <div id="mesh-result-container" class="hidden-animated">
+                        <div class="truss-view-tabs">
+                            <button class="view-tab active" data-view-target="mesh-2d-view" data-calc="mesh">Sxema</button>
+                            <button class="view-tab" data-view-target="mesh-3d-view" data-calc="mesh">3D Model</button>
+                        </div>
+                        
+                        <div id="mesh-2d-view" class="glass-card drawing-card">
+                            <canvas id="meshCanvas"></canvas>
+                        </div>
+
+                        <div id="mesh-3d-view" class="glass-card drawing-card hidden">
+                            <div id="mesh-3d-container" style="width: 100%; height: 350px;"></div>
+                        </div>
+
+                        <div class="glass-card result-card">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="res-label">Jami uzunlik</span>
+                                    <span class="res-value" id="res-mesh-length">0.00</span>
+                                    <span class="res-unit">m</span>
+                                </div>
+                                <div class="result-item highlight">
+                                    <span class="res-label">Jami og'irlik</span>
+                                    <span class="res-value" id="res-mesh-weight">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Concrete Calculator Page -->
+            <section id="page-concrete" class="page">
+                <div class="calculator-container">
+                    <div class="glass-card main-inputs">
+                        <div class="page-header">
+                            <h2>Beton hajmi</h2>
+                        </div>
+                        <div class="input-group">
+                            <label>Uzunligi (metr)</label>
+                            <div class="input-with-icon">
+                                <i data-lucide="arrows-left-right"></i>
+                                <input type="number" id="concrete-length" placeholder="Masalan: 10" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Eni (metr)</label>
+                            <div class="input-with-icon">
+                                <i data-lucide="move-horizontal"></i>
+                                <input type="number" id="concrete-width" placeholder="Masalan: 0.4" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Balandligi / Qalinligi (metr)</label>
+                            <div class="input-with-icon">
+                                <i data-lucide="move-vertical"></i>
+                                <input type="number" id="concrete-height" placeholder="Masalan: 0.6" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button id="btn-calc-concrete" class="primary-btn">
+                                <i data-lucide="box"></i>
+                                Hisoblash
+                            </button>
+                            <button id="btn-clear-concrete" class="secondary-btn">
+                                <i data-lucide="refresh-cw"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Concrete Result Card -->
+                    <div id="concrete-result-container" class="hidden-animated">
+                        <div class="truss-view-tabs">
+                            <button class="view-tab active" data-view-target="concrete-2d-view" data-calc="concrete">Sxema</button>
+                            <button class="view-tab" data-view-target="concrete-3d-view" data-calc="concrete">3D Model</button>
+                        </div>
+
+                        <div id="concrete-2d-view" class="glass-card drawing-card">
+                            <canvas id="concreteCanvas"></canvas>
+                        </div>
+
+                        <div id="concrete-3d-view" class="glass-card drawing-card hidden">
+                            <div id="concrete-3d-container" style="width: 100%; height: 350px;"></div>
+                        </div>
+
+                        <div id="concrete-result-card" class="glass-card result-card">
+                            <div class="result-header">
+                                <h3>Jami hajm</h3>
+                            </div>
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="res-label">Beton hajmi</span>
+                                    <span class="res-value" id="res-concrete-volume">0.00</span>
+                                    <span class="res-unit">m³</span>
+                                </div>
+                                <div class="result-item highlight">
+                                    <span class="res-label">Jami og'irlik (taxminan)</span>
+                                    <span class="res-value" id="res-concrete-weight">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Truss Calculator Page -->
+            <section id="page-truss" class="page">
+                <div class="calculator-container">
+                    <div class="glass-card main-inputs">
+                        <div class="page-header">
+                            <h2>Ferma Konstruktor</h2>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Prolyot (L) mm</label>
+                                <input type="number" id="truss-span" placeholder="6000" value="6000">
+                            </div>
+                            <div class="input-group">
+                                <label>Balandlik (H) mm</label>
+                                <input type="number" id="truss-height" placeholder="1000" value="1000">
+                            </div>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Panellar soni</label>
+                                <input type="number" id="truss-panels" placeholder="6" value="6">
+                            </div>
+                            <div class="input-group">
+                                <label>Turi</label>
+                                <select id="truss-type" class="glass-select">
+                                    <option value="triangle">Uchburchak</option>
+                                    <option value="pratt">Pratt (N-turi)</option>
+                                    <option value="howe">Howe (M-turi)</option>
+                                    <option value="warren">Warren (W-turi)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Asosiy profil</label>
+                                <select id="truss-main-profile" class="glass-select">
+                                    <option value="9.2">80x80x4</option>
+                                    <option value="11.7">100x100x4</option>
+                                    <option value="17.5">120x120x5</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Ichki profil</label>
+                                <select id="truss-inner-profile" class="glass-select">
+                                    <option value="3.3">40x40x3</option>
+                                    <option value="4.2">50x50x3</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button id="btn-calc-truss" class="primary-btn">
+                                <i data-lucide="drafting-compass"></i>
+                                Loyihalash
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Truss Drawing and Results -->
+                    <div id="truss-result-container" class="hidden-animated">
+                        <div class="truss-view-tabs">
+                            <button class="view-tab active" data-view-target="truss-2d-view" data-calc="truss">2D Chizma</button>
+                            <button class="view-tab" data-view-target="truss-3d-view" data-calc="truss">3D Model</button>
+                        </div>
+                        
+                        <div id="truss-2d-view" class="glass-card drawing-card blueprint-style">
+                            <div id="truss-svg-container">
+                                <!-- SVG will be injected here -->
+                            </div>
+                        </div>
+
+                        <div id="truss-3d-view" class="glass-card drawing-card hidden">
+                            <div id="truss-3d-container" style="width: 100%; height: 400px;"></div>
+                            <div class="hint-3d">Aylantirish uchun suring</div>
+                        </div>
+                        <div class="glass-card result-card">
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="res-label">Jami og'irlik</span>
+                                    <span class="res-value" id="res-truss-weight">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Jami metr</span>
+                                    <span class="res-value" id="res-truss-length">0.00</span>
+                                    <span class="res-unit">m</span>
+                                </div>
+                            </div>
+                            <button id="btn-export-truss" class="secondary-btn w-full mt-10">
+                                <i data-lucide="download"></i> Natijani yuklab olish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Norms Page -->
+            <section id="page-norms" class="page">
+                <div class="page-header">
+                    <h2>Me'yorlar (ShNQ / O'zDSt)</h2>
+                </div>
+                <div class="norms-container">
+                    <!-- Armatura Norms -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <i data-lucide="scroll-text"></i>
+                            <h3>O'zDSt 3020 (Armatura)</h3>
+                        </div>
+                        <div class="norms-table-wrapper">
+                            <table class="norms-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ø (mm)</th>
+                                        <th>1m og'irligi (kg)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>8</td><td>0.395</td></tr>
+                                    <tr><td>10</td><td>0.617</td></tr>
+                                    <tr><td>12</td><td>0.888</td></tr>
+                                    <tr><td>14</td><td>1.208</td></tr>
+                                    <tr><td>16</td><td>1.578</td></tr>
+                                    <tr><td>18</td><td>1.998</td></tr>
+                                    <tr><td>20</td><td>2.466</td></tr>
+                                    <tr><td>22</td><td>2.984</td></tr>
+                                    <tr><td>25</td><td>3.853</td></tr>
+                                    <tr><td>28</td><td>4.834</td></tr>
+                                    <tr><td>32</td><td>6.313</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Concrete Norms -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <i data-lucide="info"></i>
+                            <h3>ShNQ (Beton Sinflari)</h3>
+                        </div>
+                        <div class="norms-table-wrapper">
+                            <table class="norms-table">
+                                <thead>
+                                    <tr>
+                                        <th>Sinf (B)</th>
+                                        <th>Marka (M)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>B7.5</td><td>M100</td></tr>
+                                    <tr><td>B10</td><td>M150</td></tr>
+                                    <tr><td>B15</td><td>M200</td></tr>
+                                    <tr><td>B20</td><td>M250</td></tr>
+                                    <tr><td>B22.5</td><td>M300</td></tr>
+                                    <tr><td>B25</td><td>M350</td></tr>
+                                    <tr><td>B30</td><td>M400</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Page -->
+            <section id="page-history" class="page">
+                <div class="page-header">
+                    <h2>Tarix</h2>
+                    <button id="btn-clear-history" class="text-btn">Tozalash</button>
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- History items will be injected here -->
+                    <div class="empty-state">
+                        <i data-lucide="history"></i>
+                        <p>Hozircha tarix mavjud emas</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Register Service Worker only on HTTP/HTTPS
+        if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js');
+            });
+        }
+    </script>
+</body>
+
+</html>
