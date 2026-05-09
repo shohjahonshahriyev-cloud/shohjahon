@@ -12,7 +12,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Armatura & Beton">
-    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    <link rel="apple-touch-icon" href="./assets/icon-192.png">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,7 +49,7 @@
         <header class="app-header">
             <div class="header-left">
                 <i data-lucide="layout-grid" class="header-icon"></i>
-                <span class="header-title">Armatura Hisoblagich</span>
+                <span class="header-title"> Hisoblagich</span>
             </div>
             <div class="header-right">
                 <button id="theme-toggle" class="icon-btn">
@@ -76,6 +76,23 @@
                 <i data-lucide="drafting-compass"></i>
                 <span>Ferma</span>
             </button>
+            <button class="nav-item" data-page="karkaz">
+                <i data-lucide="box-select"></i>
+                <span>Karkaz</span>
+            </button>
+            <button class="nav-item" data-page="plita">
+                <i data-lucide="grid-3x3"></i>
+                <span>Plita</span>
+            </button>
+            <button class="nav-item" data-page="rama">
+                <i data-lucide="building-2"></i>
+                <span>Rama</span>
+            </button>
+            <button class="nav-item" data-page="fundament">
+                <i data-lucide="layers"></i>
+                <span>Poydevor</span>
+            </button>
+
             <button class="nav-item" data-page="norms">
                 <i data-lucide="scroll-text"></i>
                 <span>Me'yorlar</span>
@@ -143,8 +160,10 @@
                     <!-- Result Card -->
                     <div id="result-card" class="glass-card result-card hidden-animated">
                         <div class="truss-view-tabs">
-                            <button class="view-tab active" data-view-target="rebar-2d-view" data-calc="rebar">Sxema</button>
-                            <button class="view-tab" data-view-target="rebar-3d-view" data-calc="rebar">3D Model</button>
+                            <button class="view-tab active" data-view-target="rebar-2d-view"
+                                data-calc="rebar">Sxema</button>
+                            <button class="view-tab" data-view-target="rebar-3d-view" data-calc="rebar">3D
+                                Model</button>
                         </div>
 
                         <div id="rebar-2d-view" class="rebar-visual-container">
@@ -152,6 +171,9 @@
                         </div>
 
                         <div id="rebar-3d-view" class="glass-card drawing-card hidden">
+                            <button class="expand-3d-btn" data-calc="rebar">
+                                <i data-lucide="maximize"></i>
+                            </button>
                             <div id="rebar-3d-container" style="width: 100%; height: 300px;"></div>
                         </div>
 
@@ -245,15 +267,19 @@
                     <!-- Mesh Drawing and Results -->
                     <div id="mesh-result-container" class="hidden-animated">
                         <div class="truss-view-tabs">
-                            <button class="view-tab active" data-view-target="mesh-2d-view" data-calc="mesh">Sxema</button>
+                            <button class="view-tab active" data-view-target="mesh-2d-view"
+                                data-calc="mesh">Sxema</button>
                             <button class="view-tab" data-view-target="mesh-3d-view" data-calc="mesh">3D Model</button>
                         </div>
-                        
+
                         <div id="mesh-2d-view" class="glass-card drawing-card">
                             <canvas id="meshCanvas"></canvas>
                         </div>
 
                         <div id="mesh-3d-view" class="glass-card drawing-card hidden">
+                            <button class="expand-3d-btn" data-calc="mesh">
+                                <i data-lucide="maximize"></i>
+                            </button>
                             <div id="mesh-3d-container" style="width: 100%; height: 350px;"></div>
                         </div>
 
@@ -320,8 +346,10 @@
                     <!-- Concrete Result Card -->
                     <div id="concrete-result-container" class="hidden-animated">
                         <div class="truss-view-tabs">
-                            <button class="view-tab active" data-view-target="concrete-2d-view" data-calc="concrete">Sxema</button>
-                            <button class="view-tab" data-view-target="concrete-3d-view" data-calc="concrete">3D Model</button>
+                            <button class="view-tab active" data-view-target="concrete-2d-view"
+                                data-calc="concrete">Sxema</button>
+                            <button class="view-tab" data-view-target="concrete-3d-view" data-calc="concrete">3D
+                                Model</button>
                         </div>
 
                         <div id="concrete-2d-view" class="glass-card drawing-card">
@@ -329,6 +357,9 @@
                         </div>
 
                         <div id="concrete-3d-view" class="glass-card drawing-card hidden">
+                            <button class="expand-3d-btn" data-calc="concrete">
+                                <i data-lucide="maximize"></i>
+                            </button>
                             <div id="concrete-3d-container" style="width: 100%; height: 350px;"></div>
                         </div>
 
@@ -387,6 +418,16 @@
                         </div>
                         <div class="input-grid-2">
                             <div class="input-group">
+                                <label>Fermalar soni</label>
+                                <input type="number" id="truss-count" placeholder="1" value="1">
+                            </div>
+                            <div class="input-group">
+                                <label>Oraliq masofa (m)</label>
+                                <input type="number" id="truss-dist" placeholder="6" value="6">
+                            </div>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
                                 <label>Asosiy profil</label>
                                 <select id="truss-main-profile" class="glass-select">
                                     <option value="9.2">80x80x4</option>
@@ -414,10 +455,12 @@
                     <!-- Truss Drawing and Results -->
                     <div id="truss-result-container" class="hidden-animated">
                         <div class="truss-view-tabs">
-                            <button class="view-tab active" data-view-target="truss-2d-view" data-calc="truss">2D Chizma</button>
-                            <button class="view-tab" data-view-target="truss-3d-view" data-calc="truss">3D Model</button>
+                            <button class="view-tab active" data-view-target="truss-2d-view" data-calc="truss">2D
+                                Chizma</button>
+                            <button class="view-tab" data-view-target="truss-3d-view" data-calc="truss">3D
+                                Model</button>
                         </div>
-                        
+
                         <div id="truss-2d-view" class="glass-card drawing-card blueprint-style">
                             <div id="truss-svg-container">
                                 <!-- SVG will be injected here -->
@@ -425,6 +468,9 @@
                         </div>
 
                         <div id="truss-3d-view" class="glass-card drawing-card hidden">
+                            <button class="expand-3d-btn" data-calc="truss">
+                                <i data-lucide="maximize"></i>
+                            </button>
                             <div id="truss-3d-container" style="width: 100%; height: 400px;"></div>
                             <div class="hint-3d">Aylantirish uchun suring</div>
                         </div>
@@ -449,6 +495,446 @@
                 </div>
             </section>
 
+            <!-- Karkaz Calculator Page -->
+            <section id="page-karkaz" class="page">
+                <div class="calculator-container">
+                    <div class="glass-card main-inputs">
+                        <div class="page-header">
+                            <h2>Karkaz To'qish</h2>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Uzunligi (L) m</label>
+                                <input type="number" id="karkaz-length" placeholder="6" value="6" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label>Eni (W) m</label>
+                                <input type="number" id="karkaz-width" placeholder="0.4" value="0.4" step="0.01">
+                            </div>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Balandligi (H) m</label>
+                                <input type="number" id="karkaz-height" placeholder="0.4" value="0.4" step="0.01">
+                            </div>
+                            <div class="input-group">
+                                <label>Qadam (step) mm</label>
+                                <input type="number" id="karkaz-step" placeholder="200" value="200">
+                            </div>
+                            <div class="input-group">
+                                <label>Chetki masofa mm</label>
+                                <input type="number" id="karkaz-end-offset" placeholder="50" value="50">
+                            </div>
+                        </div>
+
+                        <!-- Variable Spacing Option -->
+                        <div class="input-group checkbox-group">
+                            <input type="checkbox" id="karkaz-var-step-toggle">
+                            <label for="karkaz-var-step-toggle">O'zgaruvchan qadam (uchastkali)</label>
+                        </div>
+
+                        <div id="karkaz-var-step-inputs" class="hidden">
+                            <div class="input-grid-2">
+                                <div class="input-group">
+                                    <label>Kuchaytirilgan qism (m)</label>
+                                    <input type="number" id="karkaz-zone-len" placeholder="1.0" value="1.0" step="0.1">
+                                </div>
+                                <div class="input-group">
+                                    <label>Zich qadam (mm)</label>
+                                    <input type="number" id="karkaz-zone-step" placeholder="100" value="100">
+                                </div>
+                            </div>
+                            <p class="hint-text">Har ikki tarafdan belgilangan masofada qadam zichlashadi.</p>
+                        </div>
+
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Asosiy Ø (mm)</label>
+                                <input type="number" id="karkaz-main-diam" placeholder="16" value="16">
+                            </div>
+                            <div class="input-group">
+                                <label>Asosiy soni</label>
+                                <input type="number" id="karkaz-main-count" placeholder="4" value="4">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Xomut Ø (mm)</label>
+                            <input type="number" id="karkaz-stirrup-diam" placeholder="8" value="8">
+                        </div>
+
+                        <div class="action-buttons">
+                            <button id="btn-calc-karkaz" class="primary-btn">
+                                <i data-lucide="construction"></i>
+                                Hisoblash
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Karkaz Drawing and Results -->
+                    <div id="karkaz-result-container" class="hidden-animated">
+                        <div class="truss-view-tabs">
+                            <button class="view-tab active" data-view-target="karkaz-2d-view"
+                                data-calc="karkaz">Sxema</button>
+                            <button class="view-tab" data-view-target="karkaz-3d-view" data-calc="karkaz">3D
+                                Model</button>
+                        </div>
+
+                        <div id="karkaz-2d-view" class="glass-card drawing-card">
+                            <canvas id="karkazCanvas"></canvas>
+                        </div>
+
+                        <div id="karkaz-3d-view" class="glass-card drawing-card hidden">
+                            <button class="expand-3d-btn" data-calc="karkaz">
+                                <i data-lucide="maximize"></i>
+                            </button>
+                            <div id="karkaz-3d-container" style="width: 100%; height: 400px;"></div>
+                            <div class="hint-3d">Aylantirish uchun suring</div>
+                        </div>
+
+                        <div class="glass-card result-card">
+                            <div class="result-grid">
+                                <div class="result-item highlight">
+                                    <span class="res-label">Jami og'irlik</span>
+                                    <span class="res-value" id="res-karkaz-weight">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Asosiy armatura</span>
+                                    <span class="res-value" id="res-karkaz-main-weight">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Xomutlar</span>
+                                    <span class="res-value" id="res-karkaz-stirrup-weight">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Xomutlar soni</span>
+                                    <span class="res-value" id="res-karkaz-stirrup-count">0</span>
+                                    <span class="res-unit">dona</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Plita Calculator Page -->
+            <section id="page-plita" class="page">
+                <div class="calculator-container">
+                    <div class="glass-card main-inputs">
+                        <div class="page-header">
+                            <h2>Plita (Slab) Hisoblagichi</h2>
+                        </div>
+                        <div class="input-group">
+                            <label>Plita turi</label>
+                            <select id="plita-type" class="full-width-select"
+                                style="width: 100%; padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; margin-bottom: 15px;">
+                                <option value="monolith">Monolit (Yaxlit)</option>
+                                <option value="hollow" selected>Pustotnaya (Bo'shliqli)</option>
+                                <option value="ribbed">Rebristaya (Qovurg'ali)</option>
+                            </select>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Uzunligi (m)</label>
+                                <input type="number" id="plita-length" placeholder="5.0" value="5.0" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label>Eni (m)</label>
+                                <input type="number" id="plita-width" placeholder="4.0" value="4.0" step="0.1">
+                            </div>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Qalinligi (mm)</label>
+                                <input type="number" id="plita-thick" placeholder="150" value="150">
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="btn-calc-plita" class="primary-btn">
+                                <i data-lucide="grid"></i>
+                                Hisoblash
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="plita-result-container" class="hidden-animated">
+                        <div class="truss-view-tabs">
+                            <button class="view-tab active" data-view-target="plita-2d-view"
+                                data-calc="plita">Sxema</button>
+                            <button class="view-tab" data-view-target="plita-3d-view" data-calc="plita">3D
+                                Model</button>
+                        </div>
+
+                        <div id="plita-2d-view" class="glass-card drawing-card">
+                            <canvas id="plitaCanvas"></canvas>
+                        </div>
+
+                        <div id="plita-3d-view" class="glass-card drawing-card hidden">
+                            <button class="expand-3d-btn" data-calc="plita">
+                                <i data-lucide="maximize"></i>
+                            </button>
+                            <div id="plita-3d-container" style="width: 100%; height: 450px;"></div>
+                            <div class="hint-3d">Aylantirish va surish mumkin</div>
+                        </div>
+
+                        <div class="glass-card result-card">
+                            <div class="result-grid">
+                                <div class="result-item highlight">
+                                    <span class="res-label">Jami og'irlik</span>
+                                    <span class="res-value" id="res-plita-weight">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Beton hajmi</span>
+                                    <span class="res-value" id="res-plita-concrete">0.00</span>
+                                    <span class="res-unit">m³</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Plita yuzasi</span>
+                                    <span class="res-value" id="res-plita-area">0.00</span>
+                                    <span class="res-unit">m²</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rama Calculator Page -->
+            <section id="page-rama" class="page">
+                <div class="calculator-container">
+                    <div class="glass-card main-inputs">
+                        <div class="page-header">
+                            <h2>Rama Konstruksiyasi</h2>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Qavatlar soni</label>
+                                <input type="number" id="rama-floors" placeholder="2" value="2">
+                            </div>
+                            <div class="input-group">
+                                <label>Ustunlar soni</label>
+                                <input type="number" id="rama-cols" placeholder="3" value="3">
+                            </div>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Ustun balandligi (m)</label>
+                                <input type="number" id="rama-col-h" placeholder="3.0" value="3.0" step="0.1">
+                            </div>
+                            <div class="input-group" id="rama-col-dist-container"
+                                style="display:flex; flex-direction:column; gap:5px;">
+                                <label>Ustunlar masofalari (m)</label>
+                                <div id="rama-col-dists"
+                                    style="display:grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 5px;">
+                                    <input type="number" class="rama-dist-input glass-input" value="4.0" step="0.1"
+                                        style="padding:5px; text-align:center;">
+                                    <input type="number" class="rama-dist-input glass-input" value="4.0" step="0.1"
+                                        style="padding:5px; text-align:center;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Asosiy Ø (mm)</label>
+                                <input type="number" id="rama-main-diam" placeholder="16" value="16">
+                            </div>
+                            <div class="input-group">
+                                <label>Xomut Ø (mm)</label>
+                                <input type="number" id="rama-stirrup-diam" placeholder="8" value="8">
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="btn-calc-rama" class="primary-btn">
+                                <i data-lucide="building-2"></i>
+                                Hisoblash
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="rama-result-container" class="hidden-animated">
+                        <div class="truss-view-tabs">
+                            <button class="view-tab active" data-view-target="rama-3d-view" data-calc="rama">3D
+                                Model</button>
+                        </div>
+
+                        <div id="rama-3d-view" class="glass-card drawing-card">
+                            <button class="expand-3d-btn" data-calc="rama">
+                                <i data-lucide="maximize"></i>
+                            </button>
+                            <div id="rama-3d-container" style="width: 100%; height: 450px;"></div>
+                            <div class="hint-3d">Aylantirish va surish mumkin</div>
+                        </div>
+
+                        <div class="glass-card result-card">
+                            <div class="result-grid">
+                                <div class="result-item highlight">
+                                    <span class="res-label">Jami og'irlik</span>
+                                    <span class="res-value" id="res-rama-weight">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Beton hajmi</span>
+                                    <span class="res-value" id="res-rama-concrete">0.00</span>
+                                    <span class="res-unit">m³</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Asosiy armatura</span>
+                                    <span class="res-value" id="res-rama-main">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Xomutlar</span>
+                                    <span class="res-value" id="res-rama-stirrup">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Fundament Calculator Page -->
+            <section id="page-fundament" class="page">
+                <div class="calculator-container">
+                    <div class="glass-card main-inputs">
+                        <div class="page-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                            <h2 style="margin:0;">Poydevor (Fundament)</h2>
+                            <select id="fundament-type" class="glass-input" style="padding:8px 15px; width:auto; border-radius:8px;">
+                                <option value="isolated">Alohida Bashmakli</option>
+                                <option value="strip">Lentasimon (To'g'ri chiziqli)</option>
+                                <option value="raft">Yaxlit Plita</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Poydevor Uzunligi (m)</label>
+                                <input type="number" id="fundament-length" placeholder="2.0" value="2.0" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label>Poydevor Eni (m)</label>
+                                <input type="number" id="fundament-width" placeholder="2.0" value="2.0" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Poydevor Qalinligi (m)</label>
+                                <input type="number" id="fundament-thick" placeholder="0.5" value="0.5" step="0.1">
+                            </div>
+                            <div class="input-group">
+                                <label>Katlavan Chuqurligi (m)</label>
+                                <input type="number" id="fundament-depth" placeholder="1.5" value="1.5" step="0.1">
+                            </div>
+                        </div>
+                        
+                        <div id="fundament-col-inputs">
+                            <h3 style="margin-top:15px; margin-bottom:10px; font-size:1.1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Ustun (Bashmak) O'lchamlari</h3>
+                            <div class="input-grid-2">
+                                <div class="input-group">
+                                    <label>Ustun Eni va Bo'yi (m)</label>
+                                    <input type="number" id="fundament-col-size" placeholder="0.4" value="0.4" step="0.1">
+                                </div>
+                                <div class="input-group">
+                                    <label>Ustun Balandligi (m)</label>
+                                    <input type="number" id="fundament-col-h" placeholder="1.2" value="1.2" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="fundament-wall-inputs" style="display: none;">
+                            <h3 style="margin-top:15px; margin-bottom:10px; font-size:1.1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Devor O'lchamlari</h3>
+                            <div class="input-grid-2">
+                                <div class="input-group">
+                                    <label>Devor Qalinligi (m)</label>
+                                    <input type="number" id="fundament-wall-thick" placeholder="0.4" value="0.4" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-top:15px; margin-bottom:10px; font-size:1.1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">Armatura Parametrlari</h3>
+                        <div class="input-grid-2">
+                            <div class="input-group">
+                                <label>Asosiy To'r (Mesh) Ø (mm)</label>
+                                <input type="number" id="fundament-main-diam" placeholder="14" value="14">
+                            </div>
+                            <div class="input-group">
+                                <label>To'r Qadami (mm)</label>
+                                <input type="number" id="fundament-main-step" placeholder="200" value="200">
+                            </div>
+                        </div>
+                        <div class="input-grid-2" id="fundament-col-rebar-inputs">
+                            <div class="input-group">
+                                <label>Ustun/Devor Asosiy Ø (mm)</label>
+                                <input type="number" id="fundament-col-diam" placeholder="16" value="16">
+                            </div>
+                            <div class="input-group">
+                                <label id="fundament-stirrup-label">Ustun Xomut Ø (mm)</label>
+                                <input type="number" id="fundament-stirrup-diam" placeholder="8" value="8">
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button id="btn-calc-fundament" class="primary-btn">
+                                <i data-lucide="layers"></i>
+                                Hisoblash
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="fundament-result-container" class="hidden-animated">
+                        <div class="truss-view-tabs">
+                            <button class="view-tab active" data-view-target="fundament-3d-view" data-calc="fundament">3D Model (Katlavan)</button>
+                        </div>
+
+                        <div id="fundament-3d-view" class="glass-card drawing-card">
+                            <button class="expand-3d-btn" data-calc="fundament">
+                                <i data-lucide="maximize"></i>
+                            </button>
+                            <div id="fundament-3d-container" style="width: 100%; height: 500px;"></div>
+                            <div class="hint-3d">Aylantirish va surish mumkin</div>
+                        </div>
+
+                        <div class="glass-card result-card">
+                            <div class="result-grid">
+                                <div class="result-item highlight">
+                                    <span class="res-label">Qazilma (Katlavan)</span>
+                                    <span class="res-value" id="res-fundament-soil">0.00</span>
+                                    <span class="res-unit">m³</span>
+                                </div>
+                                <div class="result-item highlight">
+                                    <span class="res-label">Jami Beton</span>
+                                    <span class="res-value" id="res-fundament-concrete">0.00</span>
+                                    <span class="res-unit">m³</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Plita armaturasi</span>
+                                    <span class="res-value" id="res-fundament-mesh-weight">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                                <div class="result-item" id="res-item-col">
+                                    <span class="res-label" id="res-label-col">Ustun armaturasi</span>
+                                    <span class="res-value" id="res-fundament-col-weight">0.00</span>
+                                    <span class="res-unit">kg</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Qum qatlami (10sm)</span>
+                                    <span class="res-value" id="res-fundament-sand">0.00</span>
+                                    <span class="res-unit">m³</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="res-label">Shag'al (10sm)</span>
+                                    <span class="res-value" id="res-fundament-gravel">0.00</span>
+                                    <span class="res-unit">m³</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <!-- Norms Page -->
             <section id="page-norms" class="page">
                 <div class="page-header">
@@ -470,17 +956,50 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>8</td><td>0.395</td></tr>
-                                    <tr><td>10</td><td>0.617</td></tr>
-                                    <tr><td>12</td><td>0.888</td></tr>
-                                    <tr><td>14</td><td>1.208</td></tr>
-                                    <tr><td>16</td><td>1.578</td></tr>
-                                    <tr><td>18</td><td>1.998</td></tr>
-                                    <tr><td>20</td><td>2.466</td></tr>
-                                    <tr><td>22</td><td>2.984</td></tr>
-                                    <tr><td>25</td><td>3.853</td></tr>
-                                    <tr><td>28</td><td>4.834</td></tr>
-                                    <tr><td>32</td><td>6.313</td></tr>
+                                    <tr>
+                                        <td>8</td>
+                                        <td>0.395</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10</td>
+                                        <td>0.617</td>
+                                    </tr>
+                                    <tr>
+                                        <td>12</td>
+                                        <td>0.888</td>
+                                    </tr>
+                                    <tr>
+                                        <td>14</td>
+                                        <td>1.208</td>
+                                    </tr>
+                                    <tr>
+                                        <td>16</td>
+                                        <td>1.578</td>
+                                    </tr>
+                                    <tr>
+                                        <td>18</td>
+                                        <td>1.998</td>
+                                    </tr>
+                                    <tr>
+                                        <td>20</td>
+                                        <td>2.466</td>
+                                    </tr>
+                                    <tr>
+                                        <td>22</td>
+                                        <td>2.984</td>
+                                    </tr>
+                                    <tr>
+                                        <td>25</td>
+                                        <td>3.853</td>
+                                    </tr>
+                                    <tr>
+                                        <td>28</td>
+                                        <td>4.834</td>
+                                    </tr>
+                                    <tr>
+                                        <td>32</td>
+                                        <td>6.313</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -501,19 +1020,42 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>B7.5</td><td>M100</td></tr>
-                                    <tr><td>B10</td><td>M150</td></tr>
-                                    <tr><td>B15</td><td>M200</td></tr>
-                                    <tr><td>B20</td><td>M250</td></tr>
-                                    <tr><td>B22.5</td><td>M300</td></tr>
-                                    <tr><td>B25</td><td>M350</td></tr>
-                                    <tr><td>B30</td><td>M400</td></tr>
+                                    <tr>
+                                        <td>B7.5</td>
+                                        <td>M100</td>
+                                    </tr>
+                                    <tr>
+                                        <td>B10</td>
+                                        <td>M150</td>
+                                    </tr>
+                                    <tr>
+                                        <td>B15</td>
+                                        <td>M200</td>
+                                    </tr>
+                                    <tr>
+                                        <td>B20</td>
+                                        <td>M250</td>
+                                    </tr>
+                                    <tr>
+                                        <td>B22.5</td>
+                                        <td>M300</td>
+                                    </tr>
+                                    <tr>
+                                        <td>B25</td>
+                                        <td>M350</td>
+                                    </tr>
+                                    <tr>
+                                        <td>B30</td>
+                                        <td>M400</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </section>
+
+
 
             <!-- History Page -->
             <section id="page-history" class="page">
@@ -532,6 +1074,23 @@
 
         </div>
     </main>
+
+    <!-- Fullscreen 3D Overlay -->
+    <div id="fullscreen-overlay" class="fullscreen-overlay hidden">
+        <div class="fullscreen-header">
+            <button id="btn-close-fullscreen" class="back-btn">
+                <i data-lucide="arrow-left"></i>
+                Orqaga
+            </button>
+            <h3 id="fullscreen-title">3D Ko'rinish</h3>
+        </div>
+        <div id="fullscreen-container" class="fullscreen-container"></div>
+        <div class="fullscreen-footer-hint">
+            <div class="hint-item"><i data-lucide="move"></i> Surish (2 barmoq)</div>
+            <div class="hint-item"><i data-lucide="rotate-3d"></i> Aylantirish</div>
+            <div class="hint-item"><i data-lucide="zoom-in"></i> Yaqinlashtirish</div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
     <script>
